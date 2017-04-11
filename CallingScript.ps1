@@ -12,7 +12,7 @@
 #------------------------------------------
 $subscriptionName = 'Microsoft Azure Internal Consumption'
 
-$URI       = 'https://raw.githubusercontent.com/GoateePFE/AzureRM/master/active-directory-new-domain-with-data/azuredeploy.json'
+$URI       = 'https://raw.githubusercontent.com/ShayaanF/mentorproject/master/domaindeploy.json'
 $Location  = 'east us'
 $rgname    = 'ShyMentoringPrj'
 
@@ -66,8 +66,8 @@ $IP   = $PublicAddress.IpAddress
 $FQDN = $PublicAddress.DnsSettings.Fqdn
 
 # RDP either way
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$FQDN"
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$IP"
+#Start-Process -FilePath mstsc.exe -ArgumentList "/v:$FQDN"
+#Start-Process -FilePath mstsc.exe -ArgumentList "/v:$IP"
 
 # Login as:  shymentoring\adadministrator
 # Use the password you supplied at the beginning of the build.
