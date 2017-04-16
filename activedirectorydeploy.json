@@ -42,21 +42,21 @@
     "virtualNetworkName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the Virtual Network to Create"
+        "description": "The name of the Virtual Network to Use"
       },
-      "defaultValue": "adVNET"
+      "defaultValue": "MentoringVNET"
     },
     "adSubnetName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the subnet created in the new VNET"
+        "description": "The name of the AD subnet in the VNET"
       },
       "defaultValue": "ADSubnet"
     },
     "adSubnet": {
       "type": "string",
       "metadata": {
-        "description": "The address range of the subnet created in the new VNET"
+        "description": "The address range of the AD subnet in the VNET"
       },
       "defaultValue": "10.0.1.0/24"
     },
@@ -190,6 +190,10 @@
         "description": "The location of resources such as templates and DSC modules that the script is dependent"
       },
       "defaultValue": "https://raw.githubusercontent.com/ShayaanF/mentorproject/master/"
+    },
+    "asdfadfasdfName": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "variables": {
