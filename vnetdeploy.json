@@ -6,7 +6,7 @@
       "type": "string",
       "defaultValue": "MentorVNET",
       "metadata": {
-        "description": "VNet name"
+        "description": "VNet Name"
       }
     },
     "vnetAddressPrefix": {
