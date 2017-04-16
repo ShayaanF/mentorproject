@@ -5,156 +5,172 @@
     "newStorageAccountName": {
       "type": "string",
       "metadata": {
-        "description": "Name of new storage account"
+        "description": "The name of the new storage account created to store the AD VMs disks"
       }
     },
     "storageAccountType": {
       "type": "string",
-      "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Standard_LRS",
-        "Standard_GRS"
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Standard_ZRS",
+        "Premium_LRS"
       ],
       "metadata": {
-        "description": "Type of storage account"
-      }
+        "description": "The type of the Storage Account created"
+      },
+      "defaultValue": "Standard_LRS"
     },
-    "publicIPName": {
+    "location": {
       "type": "string",
-      "metadata": {
-        "description": "Name of Public IP"
-      }
-    },
-    "publicIPAddressType": {
-      "type": "string",
-      "defaultValue": "Dynamic",
       "allowedValues": [
-        "Dynamic"
+        "West US",
+        "East US",
+        "West Europe",
+        "East Asia",
+        "Southeast Asia"
       ],
       "metadata": {
-        "description": "Type of Public Address"
-      }
-    },
-    "vmName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the VM"
-      }
-    },
-    "vmSize": {
-      "type": "string",
-      "defaultValue": "Standard_A0",
-      "allowedValues": [
-        "Standard_A0",
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4"
-      ],
-      "metadata": {
-        "description": "Size of the VM"
-      }
-    },
-    "imagePublisher": {
-      "type": "string",
-      "defaultValue": "Canonical",
-      "metadata": {
-        "description": "Image Publisher"
-      }
-    },
-    "imageOffer": {
-      "type": "string",
-      "defaultValue": "UbuntuServer",
-      "metadata": {
-        "description": "Image Offer"
-      }
-    },
-    "imageSKU": {
-      "type": "string",
-      "defaultValue": "12.04.2-LTS",
-      "metadata": {
-        "description": "Image SKU"
-      }
-    },
-    "adminUserName": {
-      "type": "string",
-      "metadata": {
-        "description": "VM Admin Username"
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "VM Password"
-      }
-    },
-    "virtualNetworkName": {
-      "type": "string",
-      "metadata": {
-        "description": "VNET Name"
+        "description": "The region to deploy the resources into"
       }
     },
     "virtualNetworkResourceGroup": {
       "type": "string",
-      "metadata": {
-        "description": "Resource Group VNET is deployed in"
-      }
+      "defaultValue": "ShyMentoringPrj-VNET"
     },
-    "subnet1Name": {
+    "virtualNetworkName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the subnet inside the VNET"
-      }
+        "description": "The name of the Virtual Network to Use"
+      },
+      "defaultValue": "MentoringVNET"
     },
-    "nicName": {
+    "VMSize": {
       "type": "string",
+      "allowedValues": [
+        "Standard_D1",
+        "Standard_DS1",
+        "Standard_D2",
+        "Standard_DS2",
+        "Standard_D3",
+        "Standard_DS3",
+        "Standard_D4",
+        "Standard_DS4",
+        "Standard_D11",
+        "Standard_DS11",
+        "Standard_D12",
+        "Standard_DS12",
+        "Standard_D13",
+        "Standard_DS13",
+        "Standard_D14",
+        "Standard_DS14"
+      ],
       "metadata": {
-        "description": "Network Interface Name"
-      }
+        "description": "The size of the VM Created"
+      },
+      "defaultValue": "Standard_D1"
+    },
+    "VM01Name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "VM01WindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    },
+    "VM02Name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "VMAdminUsername": {
+      "type": "string",
+      "defaultValue": "VMAdministrator"
+    },
+    "VMAdminPassword": {
+      "type": "securestring"
+    },
+    "VM02WindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    },
+    "VM01PIPDnsName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "VM02PIPDnsName": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "variables": {
-    "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]"
+    "VM01ImagePublisher": "MicrosoftWindowsServer",
+    "VM01ImageOffer": "WindowsServer",
+    "VM01OSDiskName": "VM01OSDisk",
+    "VM01VmSize": "Standard_D2_v2",
+    "VM01VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "VM01SubnetRef": "[concat(variables('VM01VnetID'), '/subnets/', 'APPSubnet')]",
+    "VM01StorageAccountContainerName": "vhds",
+    "VM01NicName": "[concat(parameters('VM01Name'), 'NetworkInterface')]",
+    "VM02ImagePublisher": "MicrosoftWindowsServer",
+    "VM02ImageOffer": "WindowsServer",
+    "VM02OSDiskName": "VM02OSDisk",
+    "VM02VmSize": "Standard_D2_v2",
+    "VM02VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "VM02SubnetRef": "[concat(variables('VM02VnetID'), '/subnets/', 'APPSubnet')]",
+    "VM02StorageAccountContainerName": "vhds",
+    "VM02NicName": "[concat(parameters('VM02Name'), 'NetworkInterface')]",
+    "VM01PIPName": "VM01PIP",
+    "VM02PIPName": "VM02PIP"
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
       "name": "[parameters('newStorageAccountName')]",
-      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
-      "properties": {
-        "accountType": "[parameters('storageAccountType')]"
-      }
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "APP Storage Account"
+      },
+      "kind": "Storage"
     },
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('publicIPName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "[parameters('publicIPAddressType')]"
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
+      "name": "[variables('VM01NicName')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[parameters('nicName')]",
-      "location": "[resourceGroup().location]",
+      "location": "eastus",
+      "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPName'))]"
-      ],
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM01PIPName'))]" ],
+      "tags": {
+        "displayName": "VM01Nic"
+      },
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
-              },
               "subnet": {
-                "id": "[variables('subnet1Ref')]"
+                "id": "[variables('VM01SubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM01PIPName'))]"
               }
             }
           }
@@ -162,34 +178,37 @@
       }
     },
     {
-      "apiVersion": "2015-06-15",
+      "name": "[parameters('VM01Name')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('vmName')]",
       "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('newStorageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('VM01NicName'))]"
       ],
+      "tags": {
+        "displayName": "VM01"
+      },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
+          "vmSize": "[variables('VM01VmSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUserName')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "computerName": "[parameters('VM01Name')]",
+          "adminUsername": "[parameters('VMAdminUserName')]",
+          "adminPassword": "[parameters('VMAdminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[parameters('imagePublisher')]",
-            "offer": "[parameters('imageOffer')]",
-            "sku": "[parameters('imageSKU')]",
+            "publisher": "[variables('VM01ImagePublisher')]",
+            "offer": "[variables('VM01ImageOffer')]",
+            "sku": "[parameters('VM01WindowsOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "osdisk",
+            "name": "VM01OSDisk",
             "vhd": {
-              "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/','osdisk.vhd')]"
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('newStorageAccountName')), '2016-01-01').primaryEndpoints.blob, variables('VM01StorageAccountContainerName'), '/', variables('VM01OSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -198,15 +217,114 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VM01NicName'))]"
             }
           ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "true",
-            "storageUri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('VM02NicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "eastus",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM02PIPName'))]" ],
+      "tags": {
+        "displayName": "VM02Nic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('VM02SubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM02PIPName'))]"
+              }
+            }
           }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('VM02Name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('newStorageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('VM02NicName'))]"
+      ],
+      "tags": {
+        "displayName": "VM02"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('VM02VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('VM02Name')]",
+          "adminUsername": "[parameters('VMAdminUserName')]",
+          "adminPassword": "[parameters('VMAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('VM02ImagePublisher')]",
+            "offer": "[variables('VM02ImageOffer')]",
+            "sku": "[parameters('VM02WindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "VM02OSDisk",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('newStorageAccountName')), '2016-01-01').primaryEndpoints.blob, variables('VM02StorageAccountContainerName'), '/', variables('VM02OSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VM02NicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('VM01PIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "eastus",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "VM1 Public IP"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('VM01PIPDnsName')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('VM02PIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "eastus",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "VM2 Public IP"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('VM02PIPDnsName')]"
         }
       }
     }
