@@ -189,7 +189,7 @@
       "metadata": {
         "description": "The location of resources such as templates and DSC modules that the script is dependent"
       },
-      "defaultValue": "https://raw.githubusercontent.com/GoateePFE/AzureRM/master/active-directory-new-domain-with-data/"
+      "defaultValue": "https://raw.githubusercontent.com/ShayaanF/mentorproject/master/"
     }
   },
   "variables": {
@@ -285,7 +285,6 @@
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.Resources/deployments/VNet",
         "[concat('Microsoft.Network/loadBalancers/',variables('adlbName'))]"
       ],
       "apiVersion": "2015-05-01-preview",
