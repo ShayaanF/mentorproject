@@ -37,9 +37,7 @@
     },
     "virtualNetworkResourceGroup": {
       "type": "string",
-      "metadata": {
-        "description": "Resource Group VNET is deployed in"
-      }
+      "defaultValue": "ShyMentoringPrj-VNET"
     },
     "virtualNetworkName": {
       "type": "string",
@@ -48,26 +46,19 @@
       },
       "defaultValue": "adVNET"
     },
-    "virtualNetworkAddressRange": {
-      "type": "string",
-      "metadata": {
-        "description": "The address range of the new VNET in CIDR format"
-      },
-      "defaultValue": "10.0.0.0/16"
-    },
     "adSubnetName": {
       "type": "string",
       "metadata": {
         "description": "The name of the subnet created in the new VNET"
       },
-      "defaultValue": "adSubnet"
+      "defaultValue": "ADSubnet"
     },
     "adSubnet": {
       "type": "string",
       "metadata": {
         "description": "The address range of the subnet created in the new VNET"
       },
-      "defaultValue": "10.0.0.0/24"
+      "defaultValue": "10.0.1.0/24"
     },
     "adNicName": {
       "type": "string",
@@ -81,7 +72,7 @@
       "metadata": {
         "description": "The IP address of the new AD VM"
       },
-      "defaultValue": "10.0.0.4"
+      "defaultValue": "10.0.1.4"
     },
     "publicIPAddressName": {
       "type": "string",
@@ -205,7 +196,7 @@
     "adLBFE": "LBFE",
     "adLBBE": "LBBE",
     "adRDPNAT": "adRDP",
-    "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
     "adSubnetRef": "[concat(variables('VnetID'),'/subnets/',parameters('adSubnetName'))]",
     "adNicId": "[resourceId('Microsoft.Network/networkInterfaces',parameters('adNicName'))]",
     "adIPConfigID": "[concat(variables('adNicId'),'/ipConfigurations/ipconfig1')]",
@@ -216,6 +207,8 @@
     "adBEAddressPoolID": "[concat(variables('adlbID'),'/backendAddressPools/',variables('adLBBE'))]",
     "adDataDisk": "ADDataDisk",
     "adDataDiskSize": 5,
+    "vnetTemplateUri": "[concat(parameters('assetLocation'),'vnet.json')]",
+    "vnetwithDNSTemplateUri": "[concat(parameters('assetLocation'),'vnet-with-dns-server.json')]",
     "adModulesURL": "[concat(parameters('assetLocation'),'CreateADDomainWithData.ps1.zip')]",
     "adConfigurationFunction": "CreateADDomainWithData.ps1\\CreateADDomainWithData"
   },
@@ -417,3 +410,4 @@
     }
   ]
 }
+
