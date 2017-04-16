@@ -46,6 +46,13 @@
       },
       "defaultValue": "MentoringVNET"
     },
+    "SubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the APP subnet in the VNET"
+      },
+      "defaultValue": "APPSubnet"
+    },
     "VMSize": {
       "type": "string",
       "allowedValues": [
@@ -120,16 +127,14 @@
     "VM01ImageOffer": "WindowsServer",
     "VM01OSDiskName": "VM01OSDisk",
     "VM01VmSize": "Standard_D2_v2",
-    "VM01VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "VM01SubnetRef": "[concat(variables('VM01VnetID'), '/subnets/', 'APPSubnet')]",
+    "VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "SubnetRef": "[concat(variables('VnetID'),'/subnets/',parameters('SubnetName'))]",
     "VM01StorageAccountContainerName": "vhds",
     "VM01NicName": "[concat(parameters('VM01Name'), 'NetworkInterface')]",
     "VM02ImagePublisher": "MicrosoftWindowsServer",
     "VM02ImageOffer": "WindowsServer",
     "VM02OSDiskName": "VM02OSDisk",
     "VM02VmSize": "Standard_D2_v2",
-    "VM02VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "VM02SubnetRef": "[concat(variables('VM02VnetID'), '/subnets/', 'APPSubnet')]",
     "VM02StorageAccountContainerName": "vhds",
     "VM02NicName": "[concat(parameters('VM02Name'), 'NetworkInterface')]",
     "VM01PIPName": "VM01PIP",
@@ -167,7 +172,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('VM01SubnetRef')]"
+                "id": "[variables('SubnetRef')]"
               },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM01PIPName'))]"
@@ -240,7 +245,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('VM02SubnetRef')]"
+                "id": "[variables('SubnetRef')]"
               },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VM02PIPName'))]"
