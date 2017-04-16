@@ -1,4 +1,4 @@
-﻿$MyCurDir = $PsScriptRoot
+$MyCurDir = $PsScriptRoot
 
 #---------- Install needed modules ----------
 #Install-Module AzureRM -Force -Verbose
@@ -12,23 +12,26 @@
 #------------------------------------------
 $subscriptionName = 'Microsoft Azure Internal Consumption'
 
-$URI       = 'https://raw.githubusercontent.com/ShayaanF/AzureRM/master/active-directory-new-domain-with-data/'
+$URI       = 'https://raw.githubusercontent.com/ShayaanF/mentorproject/master/'
+$VNETTemplate = 'vnetdeploy.json'
 $ADTemplate = 'activedirectorydeploy.json'
 $VMTemplate = 'vmdeploy.json'
 $SQLTemplate = 'sqldeploy.json'
+
 $Location  = 'east us'
-$adrgname    = 'ShyMentoringPrj-AD'
+
+$vnetrgname    = 'ShyMentoringPrj-VNET'
+$adclrgname    = 'ShyMentoringPrj-AD'
 $apprgname    = 'ShyMentoringPrj-APP'
 $dbrgname    = 'ShyMentoringPrj-DB'
 
 
 #---------- Storage Accounts (lowercase only)  ----------
-$StorageAccountGeneral = 'shygeneralstorage'
+$StorageAccountAD = 'shyadstorage'
+$StorageAccountAPP = 'shyappstorage'
 $StorageAccountDB1 = 'shydbstorage1'
 $StorageAccountDB2 = 'shydbstorage2'
 $StorageAccountDB3 = 'shydbstorage3'
-
-$addnsName = 'shymentoringad'     # Lowercase required
 
 #------------------------------------------------------
 #---------- Authenticate/Select Subscription ----------
@@ -40,17 +43,33 @@ if (Test-AzureRmDnsAvailability -DomainNameLabel $addnsName -Location $Location)
 { 'Name is available, proceeding...' } else { 'Taken. addnsName must be globally unique.' }
 
 #---------- Build Resource Groups ----------
+New-AzureRmResourceGroup -Name $vnetrgname -Location $Location
 New-AzureRmResourceGroup -Name $adrgname -Location $Location
 New-AzureRmResourceGroup -Name $apprgname -Location $Location
 New-AzureRmResourceGroup -Name $dbrgname -Location $Location
 
+#----------------------------------------------------------------------------------------------------
+#---------- VNET Template Parameters ----------
+$SplatParams = @{
+    TemplateUri             = $URI + $VNETTemplate
+    ResourceGroupName       = $vnetrgname
+   }
+   
 
+New-AzureRmResourceGroupDeployment @SplatParams -Verbose #deploy VNET and Subnets
+
+#----------------------------------------------------------------------------------------------------
 #---------- AD Template Parameters ----------
 $MyParams = @{
-    newStorageAccountName = $StorageAccountGeneral
+    virtualNetworkResourceGroup = $vnetrgname
+    virtualNetworkName = 'MentorVNET'
+    adSubnetName = 'ADSubnet'
+    adSubnet = '10.0.1.0/24'
+    adNicIPAddress = '10.0.1.4'
+    newStorageAccountName = $StorageAccountAD
     location              = 'East US'
     domainName            = 'shymentoring.local'
-    addnsName             = $addnsName
+    addnsName             = 'shymentoringad' 
    }
 
 #--------------------------------------------
@@ -68,14 +87,35 @@ $SplatParams = @{
 # One prompt for the domain admin password
 New-AzureRmResourceGroupDeployment @SplatParams -Verbose
 
-# Find the VM IP and FQDN
-$PublicAddress = (Get-AzureRmPublicIpAddress -ResourceGroupName $adrgname)[0]
-$IP   = $PublicAddress.IpAddress
-$FQDN = $PublicAddress.DnsSettings.Fqdn
+#----------------------------------------------------------------------------------------------------
+#---------- VM Template Parameters ----------
+$MyParams = @{
+    virtualNetworkResourceGroup = $vnetrgname
+    virtualNetworkName = 'MentorVNET'
+    SubnetName = 'APPSubnet'
+    VM01Name = 'VM01'
+    VM02Name = 'VM02'
+    VM01PIPDnsName = 'shymentoringvm01'
+    VM02PIPDnsName = 'shymentoringvm02'
 
-# RDP either way
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$FQDN"
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$IP"
+    newStorageAccountName = $StorageAccountAPP
+    location              = 'East US'
+   }
+
+#--------------------------------------------
+#----------------- VM Setup ----------------- 
+#--------------------------------------------
+$SplatParams = @{
+    TemplateUri             = $URI + $VMTemplate
+    ResourceGroupName       = $apprgname
+    TemplateParameterObject = $MyParams
+    Name                    = 'ShyMentoring'
+   }
+
+
+# One prompt for the domain admin password
+New-AzureRmResourceGroupDeployment @SplatParams -Verbose
+
 
 # Login as:  shymentoring\adadministrator
 # Use the password you supplied at the beginning of the build.
