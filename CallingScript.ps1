@@ -1,5 +1,3 @@
-$MyCurDir = $PsScriptRoot
-
 #---------- Install needed modules ----------
 #Install-Module AzureRM -Force -Verbose
 #Install-AzureRM
@@ -17,9 +15,11 @@ $VNETTemplate = 'vnetdeploy.json'
 $ADTemplate = 'activedirectorydeploy.json'
 $VMTemplate = 'vmdeploy.json'
 $SQLTemplate = 'sqldeploy.json'
+$JoinTemplate = 'joinvm.json'
 
 $Location  = 'east us'
 
+#---------- Resource Groups  ----------
 $vnetrgname    = 'ShyMentoringPrj-VNET'
 $adclrgname    = 'ShyMentoringPrj-AD'
 $apprgname    = 'ShyMentoringPrj-APP'
@@ -33,9 +33,7 @@ $StorageAccountDB1 = 'shydbstorage1'
 $StorageAccountDB2 = 'shydbstorage2'
 $StorageAccountDB3 = 'shydbstorage3'
 
-#------------------------------------------------------
 #---------- Authenticate/Select Subscription ----------
-#------------------------------------------------------
 Login-AzureRmAccount -SubscriptionName $subscriptionName
 
 #---------- DNS Name Check ----------
@@ -108,6 +106,27 @@ $MyParams = @{
 $SplatParams = @{
     TemplateUri             = $URI + $VMTemplate
     ResourceGroupName       = $apprgname
+    TemplateParameterObject = $MyParams
+    Name                    = 'ShyMentoring'
+   }
+
+
+# One prompt for the domain admin password
+New-AzureRmResourceGroupDeployment @SplatParams -Verbose
+
+
+#----------------------------------------------------------------------------------------------------
+#---------- Domain Join Parameters ----------
+$MyParams = @{
+    vmList = 'VM01,VM02'
+    location              = 'East US'
+    domainJoinUserName = 'ADAdministrator'
+    domainFQDN = 'shymentoring.local'
+   }
+
+$SplatParams = @{
+    TemplateUri             = $URI + $JoinTemplate
+    ResourceGroupName       = $adrgname
     TemplateParameterObject = $MyParams
     Name                    = 'ShyMentoring'
    }
